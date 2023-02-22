@@ -1,6 +1,10 @@
 use crate::{
-    entities::user::NewUser,
-    models::{auth::Credentials, errors::AppError, StateType},
+    models::{
+        auth::Credentials,
+        errors::AppError,
+        user::{NewUser, UserProfile},
+        StateType,
+    },
     services::auth_service,
 };
 use axum::{extract::State, Json};
@@ -13,14 +17,8 @@ pub async fn authorize(
     let (token, user) = auth_service::authorize(&state.db, credentials).await?;
 
     Ok(Json(json!({
-        "success": true,
         "token": token,
-        "profile": {
-            "id": user.id,
-            "email": user.email,
-            "firstname": user.firstname,
-            "lastname": user.lastname,
-        }
+        "profile": UserProfile::from(user)
     })))
 }
 
@@ -31,13 +29,7 @@ pub async fn register(
     let (token, new_user) = auth_service::register(&state.db, new_user).await?;
 
     Ok(Json(json!({
-        "success": true,
         "token": token,
-        "profile": {
-            "id": new_user.id,
-            "email": new_user.email,
-            "firstname": new_user.firstname,
-            "lastname": new_user.lastname,
-        }
+        "profile": UserProfile::from(new_user)
     })))
 }
