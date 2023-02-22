@@ -1,9 +1,12 @@
+use crate::{
+    entities::user,
+    models::user::{NewUser, User},
+};
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter, Set,
 };
 
 use crate::{
-    entities::user::{self, NewUser},
     helpers::create_token,
     models::{
         auth::Credentials,
@@ -14,7 +17,7 @@ use crate::{
 pub async fn authorize(
     db: &DatabaseConnection,
     credentials: Credentials,
-) -> Result<(String, user::Model), AppError> {
+) -> Result<(String, User), AppError> {
     let user = user::Entity::find()
         .filter(
             Condition::all()
