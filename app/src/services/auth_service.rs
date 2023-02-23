@@ -1,7 +1,4 @@
-use crate::{
-    entities::user,
-    models::user::{NewUser, User},
-};
+use crate::{entities::user, models::user::NewUser};
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, QueryFilter, Set,
 };
@@ -17,7 +14,7 @@ use crate::{
 pub async fn authorize(
     db: &DatabaseConnection,
     credentials: Credentials,
-) -> Result<(String, User), AppError> {
+) -> Result<(String, user::Model), AppError> {
     let user = user::Entity::find()
         .filter(
             Condition::all()
@@ -37,7 +34,7 @@ pub async fn authorize(
 pub async fn register(
     db: &DatabaseConnection,
     new_user: NewUser,
-) -> Result<(String, User), AppError> {
+) -> Result<(String, user::Model), AppError> {
     let new_user = user::ActiveModel {
         firstname: Set(new_user.firstname),
         lastname: Set(new_user.lastname),
@@ -52,7 +49,7 @@ pub async fn register(
     Ok((token, new_user))
 }
 
-pub async fn validate_token(db: &DatabaseConnection, id: i32) -> Result<User, AppError> {
+pub async fn validate_token(db: &DatabaseConnection, id: i32) -> Result<user::Model, AppError> {
     let user = user::Entity::find_by_id(id).one(db).await?;
 
     if let Some(user) = user {

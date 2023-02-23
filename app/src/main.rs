@@ -1,5 +1,5 @@
 use axum::http::{self, Method, StatusCode};
-use axum::routing::{get, post};
+use axum::routing::{delete, get, post};
 use axum::Router;
 use sea_orm::Database;
 use std::vec;
@@ -39,7 +39,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .route("/register", post(auth_controller::register))
         .route("/validate_token", get(auth_controller::validate_token));
 
-    let entry_router = Router::new().route("/", get(entry_controller::get_entries));
+    let entry_router = Router::new()
+        .route("/", get(entry_controller::get_entries))
+        .route("/:id", delete(entry_controller::delete_entry));
 
     let app = Router::new()
         .nest("/auth", auth_router)

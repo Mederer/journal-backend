@@ -24,3 +24,12 @@ CREATE TABLE "entry" (
 
 INSERT INTO "user" (firstname, lastname, email, secret) VALUES ('Mitchell', 'Dederer', 'mederer@me.com', 'password');
 INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
+INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
+INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
+INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
+INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
+INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
+INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
+INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
+INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
+INSERT INTO "entry" (title, body, user_id) VALUES ('Hello world!', 'My first post', 1);
