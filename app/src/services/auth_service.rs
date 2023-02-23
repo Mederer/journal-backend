@@ -37,7 +37,7 @@ pub async fn authorize(
 pub async fn register(
     db: &DatabaseConnection,
     new_user: NewUser,
-) -> Result<(String, user::Model), AppError> {
+) -> Result<(String, User), AppError> {
     let new_user = user::ActiveModel {
         firstname: Set(new_user.firstname),
         lastname: Set(new_user.lastname),
@@ -50,4 +50,14 @@ pub async fn register(
     let token = create_token(new_user.id.to_string().as_str())?;
 
     Ok((token, new_user))
+}
+
+pub async fn validate_token(db: &DatabaseConnection, id: i32) -> Result<User, AppError> {
+    let user = user::Entity::find_by_id(id).one(db).await?;
+
+    if let Some(user) = user {
+        Ok(user)
+    } else {
+        Err(AuthError::InvalidToken.into())
+    }
 }

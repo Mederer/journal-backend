@@ -1,7 +1,7 @@
 use crate::{
     models::{
-        auth::Credentials,
-        errors::AppError,
+        auth::{Claims, Credentials},
+        errors::{AppError, AuthError},
         user::{NewUser, UserProfile},
         StateType,
     },
@@ -32,4 +32,16 @@ pub async fn register(
         "token": token,
         "profile": UserProfile::from(new_user)
     })))
+}
+
+pub async fn validate_token(
+    State(state): StateType,
+    claims: Claims,
+) -> Result<Json<Value>, AppError> {
+    println!("Found this: {}", claims.sub);
+    let id: i32 = claims.sub.parse().map_err(|_| AuthError::InvalidToken)?;
+
+    let user = auth_service::validate_token(&state.db, id).await?;
+
+    Ok(Json(json!({ "user": user })))
 }
