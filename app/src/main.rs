@@ -1,14 +1,17 @@
-use axum::http::{self, Method, StatusCode};
-use axum::routing::{get, post};
+use axum::http::{self, HeaderValue, Method, StatusCode};
+use axum::middleware::from_fn_with_state;
+use axum::routing::{delete, get, post};
 use axum::Router;
 use sea_orm::Database;
 use std::vec;
 use std::{error::Error, net::SocketAddr, sync::Arc};
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::CorsLayer;
 use tracing::info;
 
 use app::controllers::{auth_controller, entry_controller};
 use app::models::AppState;
+
+use app::middleware::extract_user;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -39,16 +42,26 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .route("/register", post(auth_controller::register))
         .route("/validate_token", get(auth_controller::validate_token));
 
-    let entry_router = Router::new().route("/", get(entry_controller::get_entries));
+    let entry_router = Router::new()
+        .route(
+            "/",
+            get(entry_controller::get_entries).post(entry_controller::add_entry),
+        )
+        .route("/:id", delete(entry_controller::delete_entry))
+        .layer(from_fn_with_state(Arc::clone(&state), extract_user));
 
     let app = Router::new()
         .nest("/auth", auth_router)
         .nest("/entry", entry_router)
-        .with_state(state)
+        .with_state(Arc::clone(&state))
         .fallback(|| async { (StatusCode::NOT_FOUND, "Resource was not found.") })
         .layer(
             CorsLayer::new()
-                .allow_origin(Any)
+                .allow_origin(
+                    "http://localhost:3000"
+                        .parse::<HeaderValue>()
+                        .expect("Error setting origin"),
+                )
                 .allow_methods(vec![Method::POST, Method::GET, Method::PUT, Method::DELETE])
                 .allow_headers(vec![
                     http::header::CONTENT_TYPE,

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-pub use crate::entities::user::Model as User;
+use crate::entities::user;
 
 #[derive(Serialize, Deserialize)]
 pub struct NewUser {
@@ -18,8 +18,8 @@ pub struct UserProfile {
     pub email: String,
 }
 
-impl From<User> for UserProfile {
-    fn from(value: User) -> Self {
+impl From<user::Model> for UserProfile {
+    fn from(value: user::Model) -> Self {
         Self {
             id: value.id,
             firstname: value.firstname,

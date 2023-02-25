@@ -1,1 +1,7 @@
-pub use crate::entities::entry::Model as Entry;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+pub struct NewEntry {
+    pub title: String,
+    pub body: String,
+}
